@@ -6,8 +6,7 @@ from sklearn.preprocessing import StandardScaler , LabelEncoder
 from sklearn.model_selection import GridSearchCV
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 data = pd.read_csv('transaction_dataset.csv')
 
@@ -31,3 +30,19 @@ encoder = LabelEncoder()
 y_train = encoder.fit_transform(y_train)
 y_test = encoder.transform(y_test)
 
+param_grid = {
+'C' : [0.1 , 1 , 10],
+'kernel' : ['linear', 'rbf' , 'poly'],
+'gamma' : ['scale' , 'auto']
+}
+
+svc = SVC()
+grid_search = GridSearchCV( svc , param_grid , cv=5 , scoring='accuracy')
+grid_search.fit(X_train , y_train)
+
+finalmodel = grid_search.best_estimator_
+
+y_pred = finalmodel.predict(X_test)
+
+from sklearn.metrics import accuracy_score
+print("Accuracy:", accuracy_score(y_test, y_pred))
